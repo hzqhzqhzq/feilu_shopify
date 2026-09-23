@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "blocks": {
     "load_video": "Carregar vídeo: {{ description }}",
@@ -347,6 +356,69 @@
       "post": "Publicar comentário",
       "success_moderated": "Comentário publicado, a aguardar moderação",
       "success": "Comentário publicado"
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "payment": {
+        "lpm": {
+          "konbini": {
+            "voucher": {
+              "label": "Loja de conveniência",
+              "outlets": {
+                "familymart": "FamilyMart",
+                "lawson": "Lawson",
+                "ministop": "Ministop",
+                "seicomart": "Seicomart"
+              },
+              "codes": {
+                "reference_number": "Código de pagamento",
+                "confirmation_number": "Código de confirmação"
+              },
+              "steps": {
+                "familymart": {
+                  "1": "Na fotocopiadora, selecione 代金支払い／チャージ (\"Pagamento / Carregamento\").",
+                  "2": "Introduza o seu código de pagamento e prima OK",
+                  "3": "Introduza o seu código de confirmação e prima OK",
+                  "4": "Verifique os detalhes e prima Confirmar para imprimir o seu talão",
+                  "5": "Leve o talão à caixa no prazo de 30 minutos e pague com dinheiro ou FamiPay"
+                },
+                "lawson": {
+                  "1": "No terminal Loppi, selecione \"各種番号をお持ちの方\" (\"Tenho um número\").",
+                  "2": "Introduza o seu código de pagamento e prima 次へ (\"Seguinte\")",
+                  "3": "Introduza o seu código de confirmação e prima 次へ",
+                  "4": "Verifique os detalhes e prima \"はい\" (\"Sim\") para imprimir o seu talão",
+                  "5": "Leve o talão à caixa no prazo de 30 minutos e pague em numerário."
+                },
+                "ministop": {
+                  "1": "No terminal Loppi, selecione \"各種番号をお持ちの方\" (\"Tenho um número\").",
+                  "2": "Introduza o seu código de pagamento e prima 次へ (\"Seguinte\")",
+                  "3": "Introduza o seu código de confirmação e prima 次へ",
+                  "4": "Verifique os detalhes e prima \"はい\" (\"Sim\") para imprimir o seu talão",
+                  "5": "Leve o talão à caixa no prazo de 30 minutos e pague em numerário."
+                },
+                "seicomart": {
+                  "1": "Na caixa, diga ao funcionário \"internet payment\" (pagamento pela internet).",
+                  "2": "Introduza o seu código de pagamento no ecrã do cliente e selecione 登録 (\"Enter\")",
+                  "3": "Introduza o seu código de confirmação e selecione 登録",
+                  "4": "Verifique os detalhes e selecione OK",
+                  "5": "Pague em numerário"
+                },
+                "1": "Leve o código de pagamento e o código de confirmação ao terminal ou à caixa da loja e efetue o pagamento em numerário antes que o vale expire."
+              },
+              "pay": "Pagar %{amount}",
+              "choose_outlet": "Escolha uma loja de conveniência para ver os seus códigos e como pagar",
+              "expires_at": "Expira a %{date}",
+              "expiry_date_time": "%{date} às %{time} JST",
+              "copy_code": "Copiar %{label}",
+              "code_copied": "Copiado",
+              "keep_receipt": "Guarde o seu talão como comprovativo de pagamento",
+              "view_instructions": "Ver instruções de pagamento",
+              "view_instructions_accessibility_label": "Ver instruções de pagamento (abre num novo separador)"
+            }
+          }
+        }
+      }
     }
   }
 }
