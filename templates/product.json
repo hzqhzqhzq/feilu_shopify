@@ -470,7 +470,6 @@
                     "heading": "Shipping Policy",
                     "open_by_default": false,
                     "icon": "none",
-                    "image_upload": "shopify://shop_images/1_6cabdceb-e275-4b5b-891d-05f6c1b6d34f.png",
                     "width": 16
                   },
                   "blocks": {
@@ -511,7 +510,6 @@
                     "heading": "Returns & Exchanges",
                     "open_by_default": false,
                     "icon": "none",
-                    "image_upload": "shopify://shop_images/35d7ef9fb3820e7d9d5f95462645bca0.png",
                     "width": 16
                   },
                   "blocks": {
@@ -553,7 +551,6 @@
                     "heading": "Secure Payment",
                     "open_by_default": false,
                     "icon": "none",
-                    "image_upload": "shopify://shop_images/cb9c15a0bcaa54f69fdfe533af6907f7.png",
                     "width": 20
                   },
                   "blocks": {
@@ -595,7 +592,6 @@
                     "heading": "Security & Privacy",
                     "open_by_default": false,
                     "icon": "none",
-                    "image_upload": "shopify://shop_images/6e07660503576c18cce9f8023c17d0f9.png",
                     "width": 20
                   },
                   "blocks": {
@@ -642,6 +638,8 @@
               "type": "ai_gen_block_1a6b7fc",
               "settings": {
                 "heading": "New Products",
+                "site_code": "PTW",
+                "api_page_size": 18,
                 "autoplay": true,
                 "autoplay_speed": 5,
                 "desktop_width_percent": 100,
@@ -670,7 +668,6 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "popup_link_cxTMym",
-            "kiwi_size_chart_recommender_kiwi_sizing_kjLX7N",
             "buy_buttons_eYQEYi",
             "accordion_AkJWxB",
             "ai_gen_block_1a6b7fc_9YY4w6"
