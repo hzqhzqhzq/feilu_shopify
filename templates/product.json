@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -131,7 +122,7 @@
                   "type": "text",
                   "name": "Product title",
                   "settings": {
-                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "text": "<h1>{{ closest.product.title }}<\/h1>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -176,16 +167,12 @@
                   "blocks": {}
                 },
                 "judge_me_reviews_preview_badge_F49EAK": {
-                  "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+                  "type": "shopify:\/\/apps\/judge-me-reviews\/blocks\/preview_badge\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
                   "disabled": true,
                   "settings": {}
                 }
               },
-              "block_order": [
-                "text_xrnftG",
-                "price_tVjtKg",
-                "judge_me_reviews_preview_badge_F49EAK"
-              ]
+              "block_order": ["text_xrnftG", "price_tVjtKg", "judge_me_reviews_preview_badge_F49EAK"]
             },
             "divider_VJhene": {
               "type": "_divider",
@@ -311,15 +298,15 @@
                     "content_font_size": 14,
                     "tab_1_enabled": true,
                     "tab_1_title": "INCH",
-                    "tab_1_content": "<p>在这里添加产品的详细信息、规格和特点。</p>",
+                    "tab_1_content": "<p>在这里添加产品的详细信息、规格和特点。<\/p>",
                     "tab_1_liquid": "{{product.metafields.custom.inch_size_table.value }}",
                     "tab_2_enabled": true,
                     "tab_2_title": "CM",
-                    "tab_2_content": "<p>在这里添加配送政策、时间和费用信息。</p>",
+                    "tab_2_content": "<p>在这里添加配送政策、时间和费用信息。<\/p>",
                     "tab_2_liquid": "{{product.metafields.custom.size_chart_table.value }}",
                     "tab_3_enabled": false,
                     "tab_3_title": "退换政策",
-                    "tab_3_content": "<p>在这里添加退换货政策和流程说明。</p>",
+                    "tab_3_content": "<p>在这里添加退换货政策和流程说明。<\/p>",
                     "tab_3_liquid": ""
                   },
                   "blocks": {}
@@ -383,6 +370,11 @@
                 "product_description_EJgLbY"
               ]
             },
+            "kiwi_size_chart_recommender_kiwi_sizing_kjLX7N": {
+              "type": "shopify:\/\/apps\/kiwi-size-chart-recommender\/blocks\/kiwiSizing\/b7369922-bf15-44ce-a121-a22a8fcbc4b0",
+              "disabled": true,
+              "settings": { "fallbackToBlockPosition": false, "waitForElementSelector": "", "waitForElementDelay": 1 }
+            },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "settings": {
@@ -434,12 +426,7 @@
                   },
                   "blocks": {}
                 },
-                "accelerated-checkout": {
-                  "type": "accelerated-checkout",
-                  "static": true,
-                  "settings": {},
-                  "blocks": {}
-                }
+                "accelerated-checkout": { "type": "accelerated-checkout", "static": true, "settings": {}, "blocks": {} }
               },
               "block_order": []
             },
@@ -470,6 +457,7 @@
                     "heading": "Shipping Policy",
                     "open_by_default": false,
                     "icon": "none",
+                    "image_upload": "shopify:\/\/shop_images\/1_6cabdceb-e275-4b5b-891d-05f6c1b6d34f.png",
                     "width": 16
                   },
                   "blocks": {
@@ -477,7 +465,7 @@
                       "type": "product-description",
                       "name": "t:names.product_description",
                       "settings": {
-                        "text": "<ul><li>Standard shipping available to the United States.</li><li>Standard delivery: 7–14 business days.</li></ul>",
+                        "text": "<ul><li>Standard shipping available to the United States.<\/li><li>Standard delivery: 7–14 business days.<\/li><\/ul>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
@@ -500,9 +488,7 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": [
-                    "product_description_c9EJjA"
-                  ]
+                  "block_order": ["product_description_c9EJjA"]
                 },
                 "accordion_row_96tLrt": {
                   "type": "_accordion-row",
@@ -510,6 +496,7 @@
                     "heading": "Returns & Exchanges",
                     "open_by_default": false,
                     "icon": "none",
+                    "image_upload": "shopify:\/\/shop_images\/35d7ef9fb3820e7d9d5f95462645bca0.png",
                     "width": 16
                   },
                   "blocks": {
@@ -517,7 +504,7 @@
                       "type": "product-description",
                       "name": "t:names.product_description",
                       "settings": {
-                        "text": "<ul><li>Easy returns & exchanges for eligible items.</li><li>Valid 15 days after delivery.</li><li>RMA authorization required before returning goods.</li></ul>",
+                        "text": "<ul><li>Easy returns & exchanges for eligible items.<\/li><li>Valid 15 days after delivery.<\/li><li>RMA authorization required before returning goods.<\/li><\/ul>",
                         "width": "fit-content",
                         "max_width": "normal",
                         "alignment": "left",
@@ -540,9 +527,7 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": [
-                    "product_description_ryH3NW"
-                  ]
+                  "block_order": ["product_description_ryH3NW"]
                 },
                 "accordion_row_kEih6d": {
                   "type": "_accordion-row",
@@ -551,6 +536,7 @@
                     "heading": "Secure Payment",
                     "open_by_default": false,
                     "icon": "none",
+                    "image_upload": "shopify:\/\/shop_images\/cb9c15a0bcaa54f69fdfe533af6907f7.png",
                     "width": 20
                   },
                   "blocks": {
@@ -558,7 +544,7 @@
                       "type": "product-description",
                       "name": "t:names.product_description",
                       "settings": {
-                        "text": "<ul><li>Your data is securely encrypted.</li><li>Chiciii shares card info only with trusted payment providers committed to protecting your information.</li></ul>",
+                        "text": "<ul><li>Your data is securely encrypted.<\/li><li>Chiciii shares card info only with trusted payment providers committed to protecting your information.<\/li><\/ul>",
                         "width": "fit-content",
                         "max_width": "normal",
                         "alignment": "left",
@@ -581,9 +567,7 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": [
-                    "product_description_ypnVnp"
-                  ]
+                  "block_order": ["product_description_ypnVnp"]
                 },
                 "accordion_row_icNanA": {
                   "type": "_accordion-row",
@@ -592,6 +576,7 @@
                     "heading": "Security & Privacy",
                     "open_by_default": false,
                     "icon": "none",
+                    "image_upload": "shopify:\/\/shop_images\/6e07660503576c18cce9f8023c17d0f9.png",
                     "width": 20
                   },
                   "blocks": {
@@ -599,7 +584,7 @@
                       "type": "product-description",
                       "name": "t:names.product_description",
                       "settings": {
-                        "text": "<ul><li>Chiciii never sells or rents your personal information.</li><li>Chiciii respects the privacy of all customers and visitors to our store.</li><li>Chiciii follows industry-leading physical, technical and administrative protocols to keep your personal data safe from unauthorized access,use,or disclosure.</li></ul>",
+                        "text": "<ul><li>Chiciii never sells or rents your personal information.<\/li><li>Chiciii respects the privacy of all customers and visitors to our store.<\/li><li>Chiciii follows industry-leading physical, technical and administrative protocols to keep your personal data safe from unauthorized access,use,or disclosure.<\/li><\/ul>",
                         "width": "fit-content",
                         "max_width": "none",
                         "alignment": "left",
@@ -622,9 +607,7 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": [
-                    "product_description_bWLLQD"
-                  ]
+                  "block_order": ["product_description_bWLLQD"]
                 }
               },
               "block_order": [
@@ -638,8 +621,8 @@
               "type": "ai_gen_block_1a6b7fc",
               "settings": {
                 "heading": "New Products",
-                "site_code": "MXW",
-                "api_page_size": 18,
+                "collection": "",
+                "products": [],
                 "autoplay": true,
                 "autoplay_speed": 5,
                 "desktop_width_percent": 100,
@@ -668,15 +651,14 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "popup_link_cxTMym",
+            "kiwi_size_chart_recommender_kiwi_sizing_kjLX7N",
             "buy_buttons_eYQEYi",
             "accordion_AkJWxB",
             "ai_gen_block_1a6b7fc_9YY4w6"
           ]
         }
       },
-      "block_order": [
-        "disclosures_g9mWze"
-      ],
+      "block_order": ["disclosures_g9mWze"],
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
@@ -693,7 +675,7 @@
       "type": "_blocks",
       "blocks": {
         "judge_me_reviews_review_widget_9izdBc": {
-          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "type": "shopify:\/\/apps\/judge-me-reviews\/blocks\/review_widget\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
           "settings": {
             "review_data": "real_data",
             "max_width": 1200,
@@ -702,9 +684,7 @@
           }
         }
       },
-      "block_order": [
-        "judge_me_reviews_review_widget_9izdBc"
-      ],
+      "block_order": ["judge_me_reviews_review_widget_9izdBc"],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -742,7 +722,7 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<p>You may also like </p>",
+            "text": "<p>You may also like <\/p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -847,16 +827,10 @@
               "blocks": {}
             }
           },
-          "block_order": [
-            "product_card_gallery_DNizbJ",
-            "product_title_M7MJkb",
-            "price_gLWgA6"
-          ]
+          "block_order": ["product_card_gallery_DNizbJ", "product_title_M7MJkb", "price_gLWgA6"]
         }
       },
-      "block_order": [
-        "text_cbcgyb"
-      ],
+      "block_order": ["text_cbcgyb"],
       "custom_css": [],
       "name": "t:names.product_recommendations",
       "settings": {
@@ -912,10 +886,5 @@
       }
     }
   },
-  "order": [
-    "main",
-    "178408417114b3b11e",
-    "product_recommendations_qggXJq",
-    "1784084146e16297b8"
-  ]
+  "order": ["main", "178408417114b3b11e", "product_recommendations_qggXJq", "1784084146e16297b8"]
 }
