@@ -1,0 +1,750 @@
+{% doc %}
+  @prompt
+    添加一个如图的分类列表，滚动到顶部时，背景透明，向下滚动时，保持吸顶效果，并且背景变成白色。鼠标放上去时，显示匪类子列表
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-nav-{{ ai_gen_id }} {
+    position: fixed;
+    top: {{ block.settings.top }}px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    display: block;
+  }
+
+  .ai-sticky-nav-{{ ai_gen_id }}.transparent {
+    background-color: transparent;
+  }
+
+  .ai-sticky-nav-{{ ai_gen_id }}.scrolled {
+    background-color: {{ block.settings.scrolled_background_color }};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-sticky-nav-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-sticky-nav-list-{{ ai_gen_id }} {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: {{ block.settings.item_spacing }}px;
+    justify-content: {{ block.settings.alignment }};
+    flex-wrap: wrap;
+  }
+
+  .ai-sticky-nav-item-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-sticky-nav-link-{{ ai_gen_id }} {
+    display: block;
+    padding: {{ block.settings.vertical_padding }}px {{ block.settings.horizontal_padding }}px;
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.font_size }}px;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .ai-sticky-nav-{{ ai_gen_id }}.scrolled .ai-sticky-nav-link-{{ ai_gen_id }} {
+    color: {{ block.settings.scrolled_text_color }};
+  }
+
+  .ai-sticky-nav-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.hover_text_color }};
+  }
+
+  .ai-sticky-nav-dropdown-{{ ai_gen_id }} {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: {{ block.settings.dropdown_background_color }};
+    min-width: {{ block.settings.dropdown_min_width }}px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: {{ block.settings.dropdown_border_radius }}px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    z-index: 1001;
+    list-style: none;
+    margin: 0;
+    padding: {{ block.settings.dropdown_padding }}px 0;
+  }
+
+  .ai-sticky-nav-item-{{ ai_gen_id }}:hover .ai-sticky-nav-dropdown-{{ ai_gen_id }} {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .ai-sticky-nav-dropdown-link-{{ ai_gen_id }} {
+    display: block;
+    padding: {{ block.settings.dropdown_item_padding }}px {{ block.settings.dropdown_padding }}px;
+    color: {{ block.settings.dropdown_text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.dropdown_font_size }}px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ai-sticky-nav-dropdown-link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.dropdown_hover_background }};
+    color: {{ block.settings.dropdown_hover_text_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-sticky-nav-list-{{ ai_gen_id }} {
+      gap: {{ block.settings.item_spacing | times: 0.5 }}px;
+    }
+
+    .ai-sticky-nav-link-{{ ai_gen_id }} {
+      padding: {{ block.settings.vertical_padding | times: 0.8 }}px {{ block.settings.horizontal_padding | times: 0.8 }}px;
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+    }
+
+    .ai-sticky-nav-dropdown-{{ ai_gen_id }} {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: auto;
+      min-width: 100%;
+      border-radius: 0;
+    }
+  }
+{% endstyle %}
+
+<sticky-category-nav-{{ ai_gen_id }} class="ai-sticky-nav-{{ ai_gen_id }} transparent" {{ block.shopify_attributes }}>
+  <div class="ai-sticky-nav-container-{{ ai_gen_id }}">
+    <ul class="ai-sticky-nav-list-{{ ai_gen_id }}">
+      {% for i in (1..6) %}
+        {% liquid
+          assign category_enabled_key = 'category_' | append: i | append: '_enabled'
+          assign category_name_key = 'category_' | append: i | append: '_name'
+          assign category_link_key = 'category_' | append: i | append: '_link'
+          assign subcategory_1_name_key = 'category_' | append: i | append: '_sub_1_name'
+          assign subcategory_1_link_key = 'category_' | append: i | append: '_sub_1_link'
+          assign subcategory_2_name_key = 'category_' | append: i | append: '_sub_2_name'
+          assign subcategory_2_link_key = 'category_' | append: i | append: '_sub_2_link'
+          assign subcategory_3_name_key = 'category_' | append: i | append: '_sub_3_name'
+          assign subcategory_3_link_key = 'category_' | append: i | append: '_sub_3_link'
+
+          assign category_enabled = block.settings[category_enabled_key]
+          assign category_name = block.settings[category_name_key]
+          assign category_link = block.settings[category_link_key]
+          assign subcategory_1_name = block.settings[subcategory_1_name_key]
+          assign subcategory_1_link = block.settings[subcategory_1_link_key]
+          assign subcategory_2_name = block.settings[subcategory_2_name_key]
+          assign subcategory_2_link = block.settings[subcategory_2_link_key]
+          assign subcategory_3_name = block.settings[subcategory_3_name_key]
+          assign subcategory_3_link = block.settings[subcategory_3_link_key]
+
+          assign has_subcategories = false
+          if subcategory_1_name != blank or subcategory_2_name != blank or subcategory_3_name != blank
+            assign has_subcategories = true
+          endif
+        %}
+
+        {% if category_enabled and category_name != blank %}
+          <li class="ai-sticky-nav-item-{{ ai_gen_id }}">
+            <a href="{{ category_link }}" class="ai-sticky-nav-link-{{ ai_gen_id }}">
+              {{ category_name }}
+            </a>
+
+            {% if has_subcategories %}
+              <ul class="ai-sticky-nav-dropdown-{{ ai_gen_id }}">
+                {% if subcategory_1_name != blank %}
+                  <li>
+                    <a href="{{ subcategory_1_link }}" class="ai-sticky-nav-dropdown-link-{{ ai_gen_id }}">
+                      {{ subcategory_1_name }}
+                    </a>
+                  </li>
+                {% endif %}
+                {% if subcategory_2_name != blank %}
+                  <li>
+                    <a href="{{ subcategory_2_link }}" class="ai-sticky-nav-dropdown-link-{{ ai_gen_id }}">
+                      {{ subcategory_2_name }}
+                    </a>
+                  </li>
+                {% endif %}
+                {% if subcategory_3_name != blank %}
+                  <li>
+                    <a href="{{ subcategory_3_link }}" class="ai-sticky-nav-dropdown-link-{{ ai_gen_id }}">
+                      {{ subcategory_3_name }}
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</sticky-category-nav-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCategoryNav{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.scrollThreshold = 50;
+      }
+
+      connectedCallback() {
+        this.handleScroll = this.handleScroll.bind(this);
+        window.addEventListener('scroll', this.handleScroll);
+        this.handleScroll();
+      }
+
+      disconnectedCallback() {
+        window.removeEventListener('scroll', this.handleScroll);
+      }
+
+      handleScroll() {
+        const scrollPosition = window.scrollY || window.pageYOffset;
+        
+        if (scrollPosition > this.scrollThreshold) {
+          this.classList.remove('transparent');
+          this.classList.add('scrolled');
+        } else {
+          this.classList.remove('scrolled');
+          this.classList.add('transparent');
+        }
+      }
+    }
+
+    customElements.define('sticky-category-nav-{{ ai_gen_id }}', StickyCategoryNav{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "分类导航栏",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "对齐方式",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "左对齐"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "flex-end",
+          "label": "右对齐"
+        },
+        {
+          "value": "space-between",
+          "label": "两端对齐"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "项目间距",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "top",
+      "label": "距离顶部高度",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "垂直内边距",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "水平内边距",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "桌面宽度",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "颜色 - 透明状态"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "颜色 - 滚动状态"
+    },
+    {
+      "type": "color",
+      "id": "scrolled_background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "scrolled_text_color",
+      "label": "文字颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "悬停文字颜色",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "字体"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "字体大小",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "下拉菜单样式"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text_color",
+      "label": "文字颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_hover_background",
+      "label": "悬停背景颜色",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_hover_text_color",
+      "label": "悬停文字颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "dropdown_min_width",
+      "label": "最小宽度",
+      "min": 150,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "dropdown_border_radius",
+      "label": "圆角",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "dropdown_padding",
+      "label": "内边距",
+      "min": 5,
+      "max": 20,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "dropdown_item_padding",
+      "label": "项目内边距",
+      "min": 5,
+      "max": 20,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "dropdown_font_size",
+      "label": "字体大小",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "分类 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_1_enabled",
+      "label": "启用分类 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_1_name",
+      "label": "分类名称",
+      "default": "分类 1"
+    },
+    {
+      "type": "url",
+      "id": "category_1_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_3_link",
+      "label": "子分类 3 链接"
+    },
+    {
+      "type": "header",
+      "content": "分类 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_2_enabled",
+      "label": "启用分类 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_2_name",
+      "label": "分类名称",
+      "default": "分类 2"
+    },
+    {
+      "type": "url",
+      "id": "category_2_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_3_link",
+      "label": "子分类 3 链接"
+    },
+    {
+      "type": "header",
+      "content": "分类 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_3_enabled",
+      "label": "启用分类 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_3_name",
+      "label": "分类名称",
+      "default": "分类 3"
+    },
+    {
+      "type": "url",
+      "id": "category_3_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_3_link",
+      "label": "子分类 3 链接"
+    },
+    {
+      "type": "header",
+      "content": "分类 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_4_enabled",
+      "label": "启用分类 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_4_name",
+      "label": "分类名称",
+      "default": "分类 4"
+    },
+    {
+      "type": "url",
+      "id": "category_4_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_3_link",
+      "label": "子分类 3 链接"
+    },
+    {
+      "type": "header",
+      "content": "分类 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_5_enabled",
+      "label": "启用分类 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_5_name",
+      "label": "分类名称",
+      "default": "分类 5"
+    },
+    {
+      "type": "url",
+      "id": "category_5_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_3_link",
+      "label": "子分类 3 链接"
+    },
+    {
+      "type": "header",
+      "content": "分类 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_6_enabled",
+      "label": "启用分类 6",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_6_name",
+      "label": "分类名称",
+      "default": "分类 6"
+    },
+    {
+      "type": "url",
+      "id": "category_6_link",
+      "label": "分类链接"
+    },
+    {
+      "type": "text",
+      "id": "category_6_sub_1_name",
+      "label": "子分类 1 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_6_sub_1_link",
+      "label": "子分类 1 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_6_sub_2_name",
+      "label": "子分类 2 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_6_sub_2_link",
+      "label": "子分类 2 链接"
+    },
+    {
+      "type": "text",
+      "id": "category_6_sub_3_name",
+      "label": "子分类 3 名称"
+    },
+    {
+      "type": "url",
+      "id": "category_6_sub_3_link",
+      "label": "子分类 3 链接"
+    }
+  ],
+  "presets": [
+    {
+      "name": "分类导航栏"
+    }
+  ]
+}
+{% endschema %}

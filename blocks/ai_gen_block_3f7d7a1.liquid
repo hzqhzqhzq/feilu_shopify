@@ -1,0 +1,796 @@
+{% doc %}
+  @prompt
+    帮我写个如图的分类列表，要求鼠标放上去的时候，会显示下拉子列表
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-category-menu-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-category-menu__list-{{ ai_gen_id }} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: {{ block.settings.layout }};
+    gap: {{ block.settings.item_spacing }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-category-menu__item-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-category-menu__link-{{ ai_gen_id }} {
+    display: block;
+    padding: {{ block.settings.link_padding }}px {{ block.settings.link_padding | times: 1.5 }}px;
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    border-radius: {{ block.settings.link_border_radius }}px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .ai-category-menu__link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.hover_background_color }};
+    color: {{ block.settings.hover_text_color }};
+  }
+
+  .ai-category-menu__dropdown-{{ ai_gen_id }} {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: {{ block.settings.dropdown_background_color }};
+    border-radius: {{ block.settings.dropdown_border_radius }}px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: {{ block.settings.dropdown_min_width }}px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+    margin-top: {{ block.settings.dropdown_offset }}px;
+    padding: {{ block.settings.dropdown_padding }}px 0;
+  }
+
+  .ai-category-menu__item-{{ ai_gen_id }}:hover .ai-category-menu__dropdown-{{ ai_gen_id }} {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .ai-category-menu__dropdown-list-{{ ai_gen_id }} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ai-category-menu__dropdown-item-{{ ai_gen_id }} {
+    margin: 0;
+  }
+
+  .ai-category-menu__dropdown-link-{{ ai_gen_id }} {
+    display: block;
+    padding: {{ block.settings.dropdown_link_padding }}px {{ block.settings.dropdown_padding }}px;
+    color: {{ block.settings.dropdown_text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.dropdown_font_size }}px;
+    transition: all 0.3s ease;
+  }
+
+  .ai-category-menu__dropdown-link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.dropdown_hover_background_color }};
+    color: {{ block.settings.dropdown_hover_text_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-category-menu__list-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-category-menu__dropdown-{{ ai_gen_id }} {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+      margin-top: {{ block.settings.dropdown_offset | divided_by: 2 }}px;
+      margin-left: {{ block.settings.link_padding }}px;
+      background-color: transparent;
+      display: none;
+    }
+
+    .ai-category-menu__item-{{ ai_gen_id }}.active .ai-category-menu__dropdown-{{ ai_gen_id }} {
+      display: block;
+    }
+
+    .ai-category-menu__link-{{ ai_gen_id }} {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-category-menu__arrow-{{ ai_gen_id }} {
+      display: inline-block;
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .ai-category-menu__item-{{ ai_gen_id }}.active .ai-category-menu__arrow-{{ ai_gen_id }} {
+      transform: rotate(180deg);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-category-menu__arrow-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+{% endstyle %}
+
+<category-menu-{{ ai_gen_id }} class="ai-category-menu-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <ul class="ai-category-menu__list-{{ ai_gen_id }}">
+    {% for i in (1..5) %}
+      {% liquid
+        assign category_enabled_key = 'category_' | append: i | append: '_enabled'
+        assign category_title_key = 'category_' | append: i | append: '_title'
+        assign category_link_key = 'category_' | append: i | append: '_link'
+        assign subcategory_1_title_key = 'category_' | append: i | append: '_sub_1_title'
+        assign subcategory_1_link_key = 'category_' | append: i | append: '_sub_1_link'
+        assign subcategory_2_title_key = 'category_' | append: i | append: '_sub_2_title'
+        assign subcategory_2_link_key = 'category_' | append: i | append: '_sub_2_link'
+        assign subcategory_3_title_key = 'category_' | append: i | append: '_sub_3_title'
+        assign subcategory_3_link_key = 'category_' | append: i | append: '_sub_3_link'
+
+        assign category_enabled = block.settings[category_enabled_key]
+        assign category_title = block.settings[category_title_key]
+        assign category_link = block.settings[category_link_key]
+        assign subcategory_1_title = block.settings[subcategory_1_title_key]
+        assign subcategory_1_link = block.settings[subcategory_1_link_key]
+        assign subcategory_2_title = block.settings[subcategory_2_title_key]
+        assign subcategory_2_link = block.settings[subcategory_2_link_key]
+        assign subcategory_3_title = block.settings[subcategory_3_title_key]
+        assign subcategory_3_link = block.settings[subcategory_3_link_key]
+
+        assign has_subcategories = false
+        if subcategory_1_title != blank or subcategory_2_title != blank or subcategory_3_title != blank
+          assign has_subcategories = true
+        endif
+      %}
+
+      {% if category_enabled and category_title != blank %}
+        <li class="ai-category-menu__item-{{ ai_gen_id }}" data-category-item>
+          {% if category_link != blank %}
+            <a href="{{ category_link }}" class="ai-category-menu__link-{{ ai_gen_id }}">
+              {{ category_title }}
+              {% if has_subcategories %}
+                <span class="ai-category-menu__arrow-{{ ai_gen_id }}">▼</span>
+              {% endif %}
+            </a>
+          {% else %}
+            <span class="ai-category-menu__link-{{ ai_gen_id }}">
+              {{ category_title }}
+              {% if has_subcategories %}
+                <span class="ai-category-menu__arrow-{{ ai_gen_id }}">▼</span>
+              {% endif %}
+            </span>
+          {% endif %}
+
+          {% if has_subcategories %}
+            <div class="ai-category-menu__dropdown-{{ ai_gen_id }}">
+              <ul class="ai-category-menu__dropdown-list-{{ ai_gen_id }}">
+                {% if subcategory_1_title != blank %}
+                  <li class="ai-category-menu__dropdown-item-{{ ai_gen_id }}">
+                    {% if subcategory_1_link != blank %}
+                      <a href="{{ subcategory_1_link }}" class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_1_title }}
+                      </a>
+                    {% else %}
+                      <span class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_1_title }}
+                      </span>
+                    {% endif %}
+                  </li>
+                {% endif %}
+
+                {% if subcategory_2_title != blank %}
+                  <li class="ai-category-menu__dropdown-item-{{ ai_gen_id }}">
+                    {% if subcategory_2_link != blank %}
+                      <a href="{{ subcategory_2_link }}" class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_2_title }}
+                      </a>
+                    {% else %}
+                      <span class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_2_title }}
+                      </span>
+                    {% endif %}
+                  </li>
+                {% endif %}
+
+                {% if subcategory_3_title != blank %}
+                  <li class="ai-category-menu__dropdown-item-{{ ai_gen_id }}">
+                    {% if subcategory_3_link != blank %}
+                      <a href="{{ subcategory_3_link }}" class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_3_title }}
+                      </a>
+                    {% else %}
+                      <span class="ai-category-menu__dropdown-link-{{ ai_gen_id }}">
+                        {{ subcategory_3_title }}
+                      </span>
+                    {% endif %}
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</category-menu-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CategoryMenu{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.categoryItems = this.querySelectorAll('[data-category-item]');
+        this.setupMobileToggle();
+      }
+
+      setupMobileToggle() {
+        if (window.innerWidth < 750) {
+          this.categoryItems.forEach((item) => {
+            const link = item.querySelector('.ai-category-menu__link-{{ ai_gen_id }}');
+            const dropdown = item.querySelector('.ai-category-menu__dropdown-{{ ai_gen_id }}');
+
+            if (dropdown) {
+              link.addEventListener('click', (e) => {
+                if (window.innerWidth < 750) {
+                  e.preventDefault();
+                  item.classList.toggle('active');
+                }
+              });
+            }
+          });
+        }
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 750) {
+            this.categoryItems.forEach((item) => {
+              item.classList.remove('active');
+            });
+          }
+        });
+      }
+    }
+
+    customElements.define('category-menu-{{ ai_gen_id }}', CategoryMenu{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Category menu",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Desktop layout",
+      "options": [
+        {
+          "value": "row",
+          "label": "Horizontal"
+        },
+        {
+          "value": "column",
+          "label": "Vertical"
+        }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Container padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Container border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Main menu style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hover_background_color",
+      "label": "Hover background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Hover text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "link_padding",
+      "label": "Link padding",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "link_border_radius",
+      "label": "Link border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Dropdown style"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_hover_background_color",
+      "label": "Hover background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_hover_text_color",
+      "label": "Hover text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "dropdown_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "dropdown_min_width",
+      "label": "Minimum width",
+      "min": 150,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "dropdown_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "dropdown_padding",
+      "label": "Padding",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "dropdown_link_padding",
+      "label": "Link padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "dropdown_offset",
+      "label": "Offset from main menu",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Category 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_1_enabled",
+      "label": "Enable category 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_1_title",
+      "label": "Title",
+      "default": "Category 1"
+    },
+    {
+      "type": "url",
+      "id": "category_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_1_title",
+      "label": "Subcategory 1 title",
+      "default": "Subcategory 1"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_1_link",
+      "label": "Subcategory 1 link"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_2_title",
+      "label": "Subcategory 2 title",
+      "default": "Subcategory 2"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_2_link",
+      "label": "Subcategory 2 link"
+    },
+    {
+      "type": "text",
+      "id": "category_1_sub_3_title",
+      "label": "Subcategory 3 title",
+      "default": "Subcategory 3"
+    },
+    {
+      "type": "url",
+      "id": "category_1_sub_3_link",
+      "label": "Subcategory 3 link"
+    },
+    {
+      "type": "header",
+      "content": "Category 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_2_enabled",
+      "label": "Enable category 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_2_title",
+      "label": "Title",
+      "default": "Category 2"
+    },
+    {
+      "type": "url",
+      "id": "category_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_1_title",
+      "label": "Subcategory 1 title",
+      "default": "Subcategory 1"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_1_link",
+      "label": "Subcategory 1 link"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_2_title",
+      "label": "Subcategory 2 title",
+      "default": "Subcategory 2"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_2_link",
+      "label": "Subcategory 2 link"
+    },
+    {
+      "type": "text",
+      "id": "category_2_sub_3_title",
+      "label": "Subcategory 3 title",
+      "default": "Subcategory 3"
+    },
+    {
+      "type": "url",
+      "id": "category_2_sub_3_link",
+      "label": "Subcategory 3 link"
+    },
+    {
+      "type": "header",
+      "content": "Category 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_3_enabled",
+      "label": "Enable category 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_3_title",
+      "label": "Title",
+      "default": "Category 3"
+    },
+    {
+      "type": "url",
+      "id": "category_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_1_title",
+      "label": "Subcategory 1 title",
+      "default": "Subcategory 1"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_1_link",
+      "label": "Subcategory 1 link"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_2_title",
+      "label": "Subcategory 2 title",
+      "default": "Subcategory 2"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_2_link",
+      "label": "Subcategory 2 link"
+    },
+    {
+      "type": "text",
+      "id": "category_3_sub_3_title",
+      "label": "Subcategory 3 title",
+      "default": "Subcategory 3"
+    },
+    {
+      "type": "url",
+      "id": "category_3_sub_3_link",
+      "label": "Subcategory 3 link"
+    },
+    {
+      "type": "header",
+      "content": "Category 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_4_enabled",
+      "label": "Enable category 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_4_title",
+      "label": "Title",
+      "default": "Category 4"
+    },
+    {
+      "type": "url",
+      "id": "category_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_1_title",
+      "label": "Subcategory 1 title",
+      "default": "Subcategory 1"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_1_link",
+      "label": "Subcategory 1 link"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_2_title",
+      "label": "Subcategory 2 title",
+      "default": "Subcategory 2"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_2_link",
+      "label": "Subcategory 2 link"
+    },
+    {
+      "type": "text",
+      "id": "category_4_sub_3_title",
+      "label": "Subcategory 3 title",
+      "default": "Subcategory 3"
+    },
+    {
+      "type": "url",
+      "id": "category_4_sub_3_link",
+      "label": "Subcategory 3 link"
+    },
+    {
+      "type": "header",
+      "content": "Category 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "category_5_enabled",
+      "label": "Enable category 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "category_5_title",
+      "label": "Title",
+      "default": "Category 5"
+    },
+    {
+      "type": "url",
+      "id": "category_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_1_title",
+      "label": "Subcategory 1 title",
+      "default": "Subcategory 1"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_1_link",
+      "label": "Subcategory 1 link"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_2_title",
+      "label": "Subcategory 2 title",
+      "default": "Subcategory 2"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_2_link",
+      "label": "Subcategory 2 link"
+    },
+    {
+      "type": "text",
+      "id": "category_5_sub_3_title",
+      "label": "Subcategory 3 title",
+      "default": "Subcategory 3"
+    },
+    {
+      "type": "url",
+      "id": "category_5_sub_3_link",
+      "label": "Subcategory 3 link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category menu"
+    }
+  ]
+}
+{% endschema %}

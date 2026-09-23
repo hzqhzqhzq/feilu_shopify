@@ -1,0 +1,355 @@
+{% doc %}
+  @prompt
+    生成一个温馨提示布局，我上传产品的时候有一个WESTSIZE字段，根据这个字段控制布局的显示或者隐藏
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% liquid
+  assign show_notice = true
+  for tag in product.tags
+    if tag contains 'WESTSIZE' or tag contains 'westsize'
+      assign show_notice = false
+      break
+    endif
+  endfor
+%}
+
+{% if show_notice %}
+  {% style %}
+    .ai-westsize-notice-{{ ai_gen_id }} {
+      display: block;
+      width: {{ block.settings.desktop_width_percent }}%;
+      max-width: 100%;
+      padding: {{ block.settings.padding }}px;
+      background-color: {{ block.settings.background_color }};
+      border-radius: {{ block.settings.border_radius }}px;
+      margin: {{ block.settings.margin_top }}px 0 {{ block.settings.margin_bottom }}px 0;
+      {% if block.settings.border_width > 0 %}
+        border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+      {% endif %}
+    }
+
+    .ai-westsize-notice__content-{{ ai_gen_id }} {
+      display: flex;
+      align-items: flex-start;
+      gap: {{ block.settings.icon_spacing }}px;
+    }
+
+    .ai-westsize-notice__icon-{{ ai_gen_id }} {
+      flex-shrink: 0;
+      width: {{ block.settings.icon_size }}px;
+      height: {{ block.settings.icon_size }}px;
+      color: {{ block.settings.icon_color }};
+    }
+
+    .ai-westsize-notice__text-wrapper-{{ ai_gen_id }} {
+      flex-grow: 1;
+    }
+
+    .ai-westsize-notice__title-{{ ai_gen_id }} {
+      margin: 0 0 {{ block.settings.title_spacing }}px 0;
+      font-size: {{ block.settings.title_size }}px;
+      font-weight: {{ block.settings.title_weight }};
+      color: {{ block.settings.title_color }};
+      line-height: 1.3;
+    }
+
+    .ai-westsize-notice__message-{{ ai_gen_id }} {
+      margin: 0;
+      font-size: {{ block.settings.message_size }}px;
+      color: {{ block.settings.message_color }};
+      line-height: 1.5;
+    }
+
+    @media screen and (max-width: 749px) {
+      .ai-westsize-notice-{{ ai_gen_id }} {
+        width: 100%;
+      }
+    }
+  {% endstyle %}
+
+  <div class="ai-westsize-notice-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+    <div class="ai-westsize-notice__content-{{ ai_gen_id }}">
+      {% if block.settings.show_icon %}
+        <div class="ai-westsize-notice__icon-{{ ai_gen_id }}">
+          {% if block.settings.icon_style == 'info' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          {% elsif block.settings.icon_style == 'alert' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          {% elsif block.settings.icon_style == 'check' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          {% elsif block.settings.icon_style == 'star' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="ai-westsize-notice__text-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <div class="ai-westsize-notice__title-{{ ai_gen_id }}">
+            {{ block.settings.title }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.message != blank %}
+          <div class="ai-westsize-notice__message-{{ ai_gen_id }}">
+            {{ block.settings.message }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "WESTSIZE 温馨提示",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "尺码提示"
+    },
+    {
+      "type": "textarea",
+      "id": "message",
+      "label": "提示信息",
+      "default": "此商品采用欧美尺码标准，建议参考尺码表选择合适的尺寸。"
+    },
+    {
+      "type": "header",
+      "content": "图标"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "显示图标",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "图标样式",
+      "options": [
+        {
+          "value": "info",
+          "label": "信息"
+        },
+        {
+          "value": "alert",
+          "label": "警告"
+        },
+        {
+          "value": "check",
+          "label": "勾选"
+        },
+        {
+          "value": "star",
+          "label": "星标"
+        }
+      ],
+      "default": "info"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "图标大小",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "图标间距",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "图标颜色",
+      "default": "#0066cc"
+    },
+    {
+      "type": "header",
+      "content": "样式"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#f0f7ff"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "内边距",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "圆角",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "边框宽度",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "边框颜色",
+      "default": "#b3d9ff"
+    },
+    {
+      "type": "header",
+      "content": "文字样式"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "标题大小",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "标题粗细",
+      "options": [
+        {
+          "value": "400",
+          "label": "正常"
+        },
+        {
+          "value": "500",
+          "label": "中等"
+        },
+        {
+          "value": "600",
+          "label": "半粗"
+        },
+        {
+          "value": "700",
+          "label": "粗体"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "标题颜色",
+      "default": "#003d7a"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "标题间距",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "message_size",
+      "label": "信息大小",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "message_color",
+      "label": "信息颜色",
+      "default": "#004080"
+    },
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "桌面宽度",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "上边距",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "下边距",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "WESTSIZE 温馨提示"
+    }
+  ]
+}
+{% endschema %}
